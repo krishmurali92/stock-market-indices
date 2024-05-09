@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Prediction</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            background-size: 200% 200%;
+            background-image: linear-gradient(45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            animation: gradient 15s ease infinite;
+        }
+        .form-container {
+            width: 300px;
+            padding: 16px;
+            color: #600690; /* Set text color */
+            margin: 0 auto;
+            animation: gradient 15s ease infinite;
+            background: linear-gradient(to right, rgb(8, 250, 222), rgb(210, 129, 247));
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+            margin-top: 20px;
+            padding: 15px;
+        }
+
+        .img-fluid {
+            width: 200%;
+            height: auto;
+        }
+
+        .mt-3 {
+            margin-top: 3rem;
+        }
+
+        .mt-4 {
+            margin-top: 4rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-danger {
+            color: #dc3545;
+        }
+
+        .row {
+            margin-bottom: 20px;
+        }
+
+        .row:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 767.98px) {
+            .col-md-4 {
+                margin-bottom: 20px;
+            }
+        }
+
+        .navbar {
+            background-color: #343a40;
+            margin-bottom: 20px;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .navbar-nav .nav-link {
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f8f9fa;
+        }
+
+        /* Additional styles */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .visualization-img {
+            width: 200%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        /* Adjust form size */
+        .form-container {
+            width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Additional Styles for Sidebar */
+        .wrapper {
+            display: flex;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #343a40;
+            padding: 30px 0;
+            box-sizing: border-box;
+        }
+
+        .sidebar h2 {
+            color: #fff;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            border-bottom: 1px solid #bdb8d7;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        } 
+
+        .sidebar ul li a {
+            color: #bdb8d7;
+            display: block;
+        }
+
+        .sidebar ul li a .fas {
+            width: 25px;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #594f8d;
+        }
+
+        .container {
+            flex: 1;
+        }
+
+        .gradient {
+        background: linear-gradient(to right, rgb(114, 167, 240), rgb(127, 4, 165));
+        }
+
+        .box-shadow {
+        box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+        }
+
+
+    </style>
+    <script>
+        // Script to show active section based on clicked navbar link
+        document.addEventListener("DOMContentLoaded", function() {
+            const sections = document.getElementsByClassName("section");
+            const navbarLinks = document.getElementsByClassName("nav-link");
+
+            Array.from(navbarLinks).forEach(function(link) {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const target = this.getAttribute("href").substring(1);
+                    showSection(target);
+                });
+            });
+
+            function showSection(id) {
+                Array.from(sections).forEach(function(section) {
+                    section.classList.remove("active");
+                });
+                document.getElementById(id).classList.add("active");
+            }
+        });
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Stock Price Prediction</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#train">Train a New Model</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#predict">Predict Next Day Price</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#models">Available Models</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#visualizations">Visualizations</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+        <div class="row">
+            <div class="container section active" id="train">
+                <div class="form-container">
+                <h1 class="text-center">Train a New Model</h1>
+                <form action="/" method="post">
+                    <div class="form-group">
+                        <label for="ticker">Ticker:</label>
+                        <select id="ticker" name="ticker">
+                            <option value="^NSEI">India - Nifty50 - ^NSEI</option>
+                            <option value="^BSESN">India - SENSEX - ^BSESN</option>
+                            <option value="^IXIC">USA - NASDAQ Composite - ^IXIC</option>
+                            <option value="^GSPC">USA - S&P 500 - ^GSPC</option>
+                            <option value="^DJI">USA - Dow Jones Industrial Average - ^DJI</option>
+                            <option value="^FTSE">UK - FTSE 100 - ^FTSE</option>
+                            <option value="^GDAXI">Germany - DAX - ^GDAXI</option>
+                            <option value="^FCHI">France - CAC 40 - ^FCHI</option>
+                            <option value="^HSI">Hong Kong - Hang Seng Index - ^HSI</option>
+                            <option value="^N225">Japan - Nikkei 225 - ^N225</option>
+                            <option value="^AXJO">Australia - ASX 200 - ^AXJO</option>
+                            <option value="^SSMI">Switzerland - Swiss Market Index - ^SSMI</option>
+                            <option value="^BVSP">Brazil - Bovespa Index - ^BVSP</option>
+                        </select>                        
+                        <input type="text" id="ticker" name="ticker" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="start_date">Start Date:</label>
+                        <input type="date" id="start_date" name="start_date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">End Date:</label>
+                        <input type="date" id="end_date" name="end_date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="algo">Algorithm:</label>
+                        <select name="algo" id="algo" class="form-control" required>
+                            <option value="linear">Linear Regression</option>
+                            <option value="decision_tree">Decision Tree</option>
+                            <option value="random_forest">Random Forest</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="test_size">Test Size:</label>
+                        <input type="number" id="test_size" name="test_size" class="form-control" min="0" max="1" step="0.01" required>
+                    </div> 
+                    <div class="form-group">
+                        <label for="model_name">Model Name:</label>
+                        <input type="text" id="model_name" name="model_name" class="form-control" required>
+                    </div>                   
+                    <button type="submit" class="btn btn-primary">Train</button>
+                </div>
+                {% if prediction %}
+                <div class="alert alert-success mt-4" role="alert">
+                    <h4 class="alert-heading">Predicted Next Day Price</h4>
+                <p>{{ prediction }}</p>
+                </div>
+                {% endif %}
+                </form>
+                {% if models_performance %}
+                <div class="model-performance">
+                    <h4>Model Performance:</h4>
+                    <ul>
+                        {% for algo, perf in models_performance.items() %}
+                        <li>{{ algo }}: MSE = {{ perf.mse }}, MAE = {{ perf.mae }}, R2 = {{ perf.r2 }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% else %}
+                    <p>No models have been trained yet.</p>
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="container section" id="predict">
+                    <div class="form-container">
+                    <h1 class="text-center">Predict Next Day Price</h1>
+                    <form action="/predict" method="post">
+                    <div class="form-group">
+                        <label for="open">Open:</label>
+                        <input type="number" step="0.01" id="open" name="open" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="high">High:</label>
+                        <input type="number" step="0.01" id="high" name="high" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="low">Low:</label>
+                        <input type="number" step="0.01" id="low" name="low" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="close">Close:</label>
+                        <input type="number" step="0.01" id="close" name="close" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="volume">Volume:</label>
+                        <input type="number" step="0.01" id="volume" name="volume" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="model_name">Model:</label>
+                        <select name="model_name">
+                            {% for name in models.keys() %}
+                                <option value="{{name}}">{{name}}</option>
+                            {% endfor %}
+                        </select>                        
+                    </div>
+                    {% if prediction %}
+                    <div class="alert alert-success mt-4" role="alert">
+                        <h4 class="alert-heading">Predicted Next Day Price</h4>
+                        <p>{{ prediction }}</p>
+                    </div>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary">Predict</button>
+                    </div>
+                </form>
+                {% if models %}
+                <h2>Available Models</h2>
+                <ul>
+                    {% for model in models %}
+                    <li>{{ model }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            <!-- Available Models Section -->
+            <div class="container section" id="models">
+                <div class="form-container">
+                <h2 class="text-center">Available Models</h2>
+                {% if models %}
+                    <ul>
+                        {% for model in models %}
+                        <li>{{ model }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No models are available.</p>
+                {% endif %}
+                </div>
+            </div>
+            <!-- Visualizations Section -->
+            <div class="container section" id="visualizations">
+                <div class="form-container">
+                <h2 class="text-center">Visualizations</h2>
+                <div class="row">
+                    <div class="col-md-7">
+                        <img src="{{ url_for('static', filename='^NSEI_Open.png') }}" class="visualization-img" alt="Open">
+                    </div>
+                    <div class="col-md-7">
+                        <img src="{{ url_for('static', filename='^NSEI_High.png') }}" class="visualization-img" alt="High">
+                    </div>
+                    <div class="col-md-7">
+                        <img src="{{ url_for('static', filename='^NSEI_Low.png') }}" class="visualization-img" alt="Low">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-7">
+                        <img src="{{ url_for('static', filename='^NSEI_Close.png') }}" class="visualization-img" alt="Close Price">
+                    </div>
+                    <div class="col-md-7">
+                        <img src="{{ url_for('static', filename='^NSEI_Volume.png') }}" class="visualization-img" alt="Volume">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-7">
+                        <img src="{{ url_for('static', filename='^NSEI_heatmap.png') }}" class="visualization-img" alt="Heatmap">
+                    </div>
+                    <div class="col-md-7">
+                        <img src="{{ url_for('static', filename='^NSEI_hist.png') }}" class="visualization-img" alt="Histogram">
+                    </div>
+            </div>
+        </div>
+        {% if prediction %}
+        <div class="alert alert-success mt-4" role="alert">
+            <h4 class="alert-heading">Predicted Next Day Price</h4>
+            <p>{{ prediction }}</p>
+        </div>
+        {% endif %}
+    </div>
+    {% if ticker %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{{ url_for('static', filename=ticker+'_Open.png') }}" class="img-fluid" alt="Open Price">
+            </div>
+            <div class="col-md-4">
+                <img src="{{ url_for('static', filename=ticker+'_High.png') }}" class="img-fluid" alt="High Price">
+            </div>
+            <div class="col-md-4">
+                <img src="{{ url_for('static', filename=ticker+'_Low.png') }}" class="img-fluid" alt="Low Price">
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename=ticker+'_Close.png') }}" class="img-fluid" alt="Close Price">
+            </div>
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename=ticker+'_Volume.png') }}" class="img-fluid" alt="Volume">
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename=ticker+'_heatmap.png') }}" class="img-fluid" alt="Heatmap">
+            </div>
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename=ticker+'_hist.png') }}" class="img-fluid" alt="Histogram">
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

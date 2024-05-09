@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .content {
+            display: flex;
+            justify-content: space-between;
+        }
+        form, .models {
+            border: 2px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            width: 45%;
+        }
+        .models {
+            margin-right: 2%;
+        }
+        label, input, select {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+            border-color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Stock Price Prediction</h1>
+    <div class="content">
+        <form action="/" method="post" enctype="multipart/form-data">
+            
+            <h2>Train a New Model</h2>
+            <label for="file">Upload CSV:</label>
+            <input type="file" id="file" name="file"><br>
+            <label for="algo">Algorithm:</label>
+            <select name="algo" id="algo">
+                <option value="linear">Linear Regression</option>
+                <option value="decision_tree">Decision Tree</option>
+                <option value="random_forest">Random Forest</option>
+            </select><br>
+            <label for="model_filename">Model Filename:</label>
+            <input type="text" id="model_filename" name="model_filename"><br>
+            <label for="test_size">Test / Train Size:</label>
+            <input type="text" id="test_size" name="test_size"><br>
+            <input type="submit" value="Train">
+            <p>Model Mean Absolute Error: {{ mae }}</p>
+            <div class="models">
+                <h2>Available Models</h2>
+                {% if models %}
+                <ul>
+                    {% for model in models %}
+                    <li>{{ model }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </form>
+        <form action="/predict" method="post">
+            <h2>Predict Next Day Price</h2>
+            <label for="open">Open:</label>
+            <input type="text" id="open" name="open"><br>
+            <label for="high">High:</label>
+            <input type="text" id="high" name="high"><br>
+            <label for="low">Low:</label>
+            <input type="text" id="low" name="low"><br>
+            <label for="close">Close:</label>
+            <input type="text" id="close" name="close"><br>
+            <label for="volume">Volume:</label>
+            <input type="text" id="volume" name="volume"><br>
+            <label for="model_name">Model:</label>
+            <select name="model_name" id="model_name">
+                {% for model in models %}
+                <option value="{{ model }}">{{ model }}</option>
+                {% endfor %}
+            </select><br>
+            <input type="submit" value="Predict">
+        </form>
+    </div>
+    {% if prediction %}
+    <h2 style="text-align:center">Predicted Next Day Price</h2>
+    <p style="text-align:center">{{ prediction }}</p>
+    {% endif %}
+</body>
+</html>
